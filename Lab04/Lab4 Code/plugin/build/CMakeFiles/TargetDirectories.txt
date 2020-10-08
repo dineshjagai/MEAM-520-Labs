@@ -1,0 +1,4 @@
+/home/meam520/Lab4/plugin/build/CMakeFiles/edit_cache.dir
+/home/meam520/Lab4/plugin/build/CMakeFiles/animated_model_1.dir
+/home/meam520/Lab4/plugin/build/CMakeFiles/rebuild_cache.dir
+/home/meam520/Lab4/plugin/build/CMakeFiles/animated_model_2.dir
