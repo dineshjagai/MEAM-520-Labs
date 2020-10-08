@@ -1,0 +1,297 @@
+\documentclass{article}
+\usepackage{arxiv}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amssymb,amsmath}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{tabu}
+\usepackage{enumerate}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage{pdfpages}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Sharelatex Example},
+    bookmarks=true,
+    pdfpagemode=FullScreen,
+    }
+%%%%%%%%%%%%%%%%S Some Macros %%%%%%%%%%%%%%%%%%%
+
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\newcommand{\qed}{\hfill $\blacksquare$}      
+
+
+
+
+\title{POTENTIAL FIELD PLANNING}
+
+
+\author{
+  Dinesh Jagai \\
+  Department of Computer Science\\
+ University of Pennsylvania \\
+ Philadelphia, PA \\  
+  \texttt{dinesh97@seas.upenn.edu} \\
+  %% examples of more authors
+  \And
+  Thomas Wang \\
+  Department of Computer Science\\
+ University of Pennsylvania \\
+ Philadelphia, PA \\  
+  \texttt{ttwang@seas.upenn.edu} \\
+
+  %% \AND
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+}
+
+\begin{document}
+\maketitle
+\section{Overview}
+\section{Concepts}
+  
+  \begin{enumerate}
+    \item 
+    The Potential field controller is formed by modeling the robot, as a particle under the influence of of a artificial potential field  $\textbf{U} $. Such that $\textbf{U}$ S superimposes i)  Repulsive forces from obstacles and ii) Attractive force from goal. \\ 
+    
+    Now, the potential function is given by: \\ 
+    $$ U(q) = U_{att}(q) + U_{rep}(q)  \  \ \  \ldots (1)$$ 
+    And the Net force is given by : \\ 
+    $$ F_{net}(q)  = \nabla U(q)  \  \ \  \ldots (2)$$ 
+    
+    For this case, we took the mobile robot to be a particle, i.e. single fixed control point and used $U_{rep}$ as follows: \\ 
+       $$  U_{rep}(q)=  \begin{cases} 
+      \dfrac{1}{2}\eta\bigg(\dfrac{1}{\rho(o(q))} - \dfrac{1}{\rho_{0}}\bigg)^2 & \rho(o(q) \leq p_0  \\
+      0 & \rho(o(q) > p_0  \\
+      \end{cases}  \  \ \  \ldots (3)$$ 
+      
+     And subsequently, $F_{rep}$ is given by: \\ 
+       $$ F_{rep}(q) = \eta\bigg(\dfrac{1}{\rho(o(q))} - \dfrac{1}{\rho_{0}}\bigg)\bigg(\dfrac{1}{\rho^2(o(q))}\bigg)
+       \nabla\rho(o(q))  \  \ \  \ldots (4)$$ 
+       
+       Where $\rho_0$ is the the distance of influence of an obstacle and $\rho(o(q))$ is the shortest distance between $o$ and any work-space obstacle \\ 
+       For this assignment, we used $\rho_0$ as infinity so $\dfrac{1}{p_0}$ is $0$ \\ 
+       Also, we assumed that the obstacle regions were convex and evaluated $ \nabla\rho(o(q))$ to be  
+       $$  \nabla\rho(o(q)) = \dfrac{o(q) - b}{||o(q) - b||} $$
+       where $b$ is the point on the obstacle that is closest to $o(q)$ \\ 
+       Now, for the attractive force, we defined our potential field of attraction as follows: 
+        $$  U_{att}(q)=  
+      \dfrac{1}{2}\zeta ||( o(q) -  o(q_f))||^2  \  \ \  \ldots (5) $$ 
+      Where $o(q_f)$ is the position of the goal. 
+      Note, We didn't used the $\textbf{parabolic well potential}$ as we assumed that that the field grows linearly with distance of the robot to the goal.  \\ 
+      As such, the force of attraction is  given by : \\ 
+      $$ F_{att}(q) = - \zeta(o(q) - o(q_f))  \  \ \  \ldots (6)$$  \\ 
+      
+      That is, $F_{net}$
+      $$  = F_{rep} + F_{att} $$ 
+      $$ = \eta\bigg(\dfrac{1}{\rho(o(q))} - \dfrac{1}{\rho_{0}}\bigg)\bigg(\dfrac{1}{\rho^2(o(q))}\bigg)
+       \nabla\rho(o(q)) - \zeta(o(q) - o(q_f)) \  \ \  \ldots (7)$$ 
+      
+   
+    
+    
+        
+    \item \textbf{Pseudocode for the planning algorithm} \\ 
+     The overall algorithm essentially calculates the net force, $F_{net}$ exerted on the mobile robot (treating it as a particle/single control point) in the artificial potential field. After finding the net force, the wheel velocities are found - this is done by finding $f_t \And f_p$ in the in the robot's frame (multiplying by a rotation matrix about $\theta$) and then solving $Ax = F$ where $x$ is the velocities of the robot and $F$ is composed of $f_t$ and $f_p$ in the robot's frame. Where $A = \big(\begin{smallmatrix}
+  \alpha & \alpha\\
+  \beta & -\beta 
+\end{smallmatrix}\big) $  such that $\alpha$ and $\beta$ are constants proportional to the wheels' radii. Note that in this case, $\alpha$ and $\beta$ were both set to the wheels' radii $(\dfrac{0.23}{2})$ \\ 
+
+Now, a more detailed approach to find $f_{net}$ is as follows. \\ 
+For the repulsive force, $F_{rep}$ we used equation $(4)$, in order to get $\rho(q)$ we essentially looped through all the obstacles and found the one that was closed to the mobile robot. We then saved this distance and obstacle's position and used it to calculate $F_{rep}$ where $\rho(q)$ is this min distance and $b$ is the min obstacle's position. \\ 
+Now, for $F_{att}$ equation $(6)$ was essentially used. \\ 
+The values of $\zeta And \eta $ were initially set to $1$ but upon running different simulations (start and end points) they were adjusted to be $9 \And 3$. When the If your repulsive force was too strong, the value of $\zeta$  was reduced and when it was too high it was increased! 
+    
+    
+
+    
+ 
+         
+\end{enumerate}         
+\newpage
+
+\section{Coding Assignment}
+
+The main modified functions are shown below! 
+
+\lstinputlisting[caption = potential\_field.py]{potential_field.py}
+
+All other modified code is included in the appendix. \\ 
+
+\newpage
+
+\section{Simulation}
+
+$$ \textbf{4.1 For Tests in Static Environment}  $$ 
+\begin{enumerate}
+    
+   \item I started off with an easy path. The start was [0,0], and the end was [0,-1]. It successfully reached the goal, and it didn't experience too many problems. It didn't go in a very straight line as there were times that it fluctuates to the sides, but in the end it got to the goal easily.
+    
+    \item Then, I tested one where the start location is [0,0], end location is [2,3]. There is a desk in between the two points. The robot in the beginning was struggling to find a direction to move in, but after a few seconds it decided on going in the y direction first, and then the x direction. It successfully avoided the desk and arrived at the destination.
+
+    \item I then tested with [-2,1] going to [-5,-2]. It successfully completed this path without much trouble. This is a clearer path because it's going almost straight to the target without many obstacles in the middle. When it got far enough from the obstacles, it moved more straight and quickly.
+
+    \item I tried to start at [3,2] and go to [4,-3]. In the beginning, the robot was moving more of less in place, and after a few seconds, it starts to move towards the desk. It successfully moved between the desk legs and towards the target. However, it got stuck near the small table, at about [4,-1]. As we could see, it was pretty close to the target, but didn't make it over.
+    
+
+
+\end{enumerate}
+
+$$ \textbf{4.2 For Tests in Dynamic Environment with Dynamic obstacles}  $$ 
+
+\begin{enumerate}
+    
+
+    \item I first tested with start location of [-2, 1] and end location of [-5,-2].  The robot was able to reach the start without a problem. When the moving balls were near it, the robot had some twitches where it didn't know where to go, but after the ball moved away it was able to find the destination.
+
+    \item Then, I tested with [3, 2] going to [4,-3]. While the path doesn't have much stationary obstacles in it, the moving ball really stopped the robot from proceeding. When the ball was far away, the robot moved towards the goal, but when it came close by, the robot moved backwards. Therefore, it couldn't reach the goal.
+    
+    \item I attempted a hard one where the start location is [3,3] and end location is [-3,-3]. It's essentially traveling across the circular trajectory of the ball. The robot couldn't find its way through because the goal was very far away and there were too many obstacles in the middle. The robot didn't move far away from the starting point before it's stuck. 
+
+
+\end{enumerate}
+
+\section{Questions to think about}
+
+\begin{enumerate}
+    \item In the 4 tests that I did, the robot succeeded 3 out of 4 times. It shows that it has a pretty good success rate. The 3 that it passed are indeed easily courses than the fourth, and the fourth one was quite complicated and far away. This shows that the robot can succeed on simpler small courses and succeed less on complicated large ones.
+
+    \item The planner worked well in situations where there aren't too many obstacles. If there were only one big obstacle in the middle, the planner can find a way around it. But if there are a few small ones around it, it sometimes gets lost and stuck. Also, it works well when the target is close by. When it's far away, there's a higher than that it gets stuck in the middle.
+    
+    \item We did not implement an approach to escape local minima. I think a potential way talked in class is to take random jumps. When the robot is the same approximate location for too long, it can take a random jump to get out of the minima and find the path again. Also, the robot can take bigger steps each time so that it can get across of the minima or out of it.
+    
+    \item One should use potential field when it's in a dynamic situation or a situation where you don't know the whole map beforehand. It can adapt to moving obstacles or unexpected obstacles because after sensing the obstacle, it can calculate the repulsive force and adjust its path. For algorithms like A* algorithm, it really needs to know the whole map before starting, and it would be much slower if it has to be in a dynamic situation. That be said, if one knows the map beforehand, an algorithm like A* or RRT would be more accurate and efficient. 
+    
+    \item The robot didn't work as well in the dynamic situation, only succeeding 1/3 of the tests. I think more tuning could improve the performance, and also it could perform better on easier courses that are farther away from the obstacles.
+    
+    \item When the robot is close to the obstacle, the repulsive force would be stronger, and thus the robot would likely to move away from it. There are still times that the robot collides with the obstacles, and that's due to either the target is too attractive in the same direction as the obstacle such that the net force is still moving into the space of the obstacle. It could also be that there is too much repulsive force from other obstacles that push the robot towards this obstacle.
+    
+    \item I changed the eta parameter so that the obstacles have a bigger repulsive force so that the robot can recognize the moving ball better. This didn't work too well because the robot just doesn't move towards the target anymore. Then, I increased the zeta parameter so that the target is more recognized. This made a difference and was able to guide the robot correctly in cases where there are less obstacles and it's an easier path.
+\end{enumerate}
+
+\newpage  
+
+
+
+
+%%%%%%%%%%%%%% Making  a Great Figure %%%%%%%%%%%%%%%%%%
+% \renewcommand{\thefigure}{1.2.1}
+% \begin{center}
+%     \begin{figure}[H]
+%         \centering
+%         \includegraphics[width=18cm]{diagram_ii.JPG}
+%          \caption{Figure Showing T_5^0}
+%     \end{figure}
+% \end{center}
+
+
+% \begin{figure}
+%   \centering
+%   \fbox{\rule[-.5cm]{4cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
+%   \caption{Sample figure caption.}
+%   \label{fig:fig1}
+% \end{figure}
+
+% \subsection{Tables}
+% \lipsum[12]
+% See awesome Table~\ref{tab:table}.
+
+
+% %%%%%%%%%%%%%%%% MAKING A  GOOD TABLE %%%%%%%%%%%%%%%%%
+% \begin{table}
+%  \caption{Sample table title}
+%   \centering
+%   \begin{tabular}{lll}
+%     \toprule
+%     \multicolumn{2}{c}{Part}                   \\
+%     \cmidrule(r){1-2}
+%     Name     & Description     & Size ($\mu$m) \\
+%     \midrule
+%     Dendrite & Input terminal  & $\sim$100     \\
+%     Axon     & Output terminal & $\sim$10      \\
+%     Soma     & Cell body       & up to $10^6$  \\
+%     \bottomrule
+%   \end{tabular}
+%   \label{tab:table}
+% \end{table}
+
+
+%%%%%%%%%%%%% MAKING LISTS %%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Lists}
+% \begin{itemize}
+% \item Lorem ipsum dolor sit amet
+% \item consectetur adipiscing elit. 
+% \item Aliquam dignissim blandit est, in dictum tortor gravida eget. In ac rutrum magna.
+% \end{itemize}
+
+
+
+%  \bibliographystyle{unsrt}  
+%  \bibliography{references}  
+ \newpage
+ 
+ \section{Appendix}
+%%%%%%PUT CODE HERE (CHANGE "PYTHON-CODE.py") %%%%%%%%%%%
+
+\lstinputlisting[caption = lidar\_scan.py]{lidar_scan.py}
+\newpage
+\lstinputlisting[caption = run\_sim.py]{runsim.py}
+\pagebreak
+
+
+
+
+
+ 
+\end{document}
